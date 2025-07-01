@@ -1,15 +1,10 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from './i18n.config';
+import { routing } from './src/i18n/routing';
 
-export default createMiddleware({
-  locales,
-  defaultLocale,
-  localePrefix: 'as-needed',
-  domains: [
-    { domain: 'motoauto.ch', defaultLocale: 'pl' },
-    { domain: 'de.motoauto.ch', defaultLocale: 'de' },
-    { domain: 'fr.motoauto.ch', defaultLocale: 'fr' },
-    { domain: 'it.motoauto.ch', defaultLocale: 'it' }
-  ]
-});
-export const config = { matcher: ['/((?!api|_next|favicon.ico).*)'] };
+// Middleware obsługuje negocjację locale i przekierowania
+export default createMiddleware(routing);
+
+export const config = {
+  // dopasuj wszystkie ścieżki oprócz /api, /_next i plików statycznych
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
+};

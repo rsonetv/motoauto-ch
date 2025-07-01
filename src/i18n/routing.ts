@@ -1,9 +1,7 @@
+import { defineRouting } from 'next-intl/routing';
+
 export const routing = defineRouting({
-  locales: ['pl', 'de', 'fr', 'it'],
-  defaultLocale: 'pl',
-  pathnames: {
-    '/': '/',
-    '/auctions': { pl: '/aukcje', de: '/auktionen', fr: '/encheres', it: '/aste' },
-    '/vehicles': { pl: '/pojazdy', de: '/fahrzeuge', fr: '/vehicules', it: '/veicoli' }
-  }
+  locales: ['pl', 'en'],         // lista obsługiwanych języków
+  defaultLocale: 'pl',           // domyślny język
+  localePrefix: 'as-needed'      // brak prefiksu dla domyślnego locale
 });

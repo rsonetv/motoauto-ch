@@ -1,6 +1,9 @@
 {
+  "extends": "@tsconfig/next/tsconfig.json",
   "compilerOptions": {
-    // Type checking (CAR FOR YOU standards)
+    /***************************************************************************
+     *             Type checking (CAR FOR YOU standards)                       *
+     ***************************************************************************/
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -11,59 +14,48 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    
-    // Module resolution
+
+    /***************************************************************************
+     *            Module resolution & emit settings                            *
+     ***************************************************************************/
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "incremental": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    
-    // JSX configuration for React
-    "jsx": "preserve",
-    "incremental": true,
-    
-    // Path mapping for automotive project structure
-    "baseUrl": ".",
+
+    /***************************************************************************
+     *             Absolute imports & path aliases                              *
+     ***************************************************************************/
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/automotive/*": ["./src/components/automotive/*"],
-      "@/common/*": ["./src/components/common/*"],
-      "@/layout/*": ["./src/components/layout/*"]
-    },
-    
-    // Next.js specific
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "@/*": ["*"],
+      "@/components/*": ["components/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/lib/*": ["lib/*"],
+      "@/types/*": ["types/*"],
+      "@/utils/*": ["utils/*"],
+      "@/styles/*": ["styles/*"],
+      "@/automotive/*": ["components/automotive/*"],
+      "@/common/*": ["components/common/*"],
+      "@/layout/*": ["components/layout/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "./src/**/*"
+    "src/**/*",
+    "app/**/*"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out",
-    "dist",
-    "build",
-    "coverage"
-  ]
+  "exclude": ["node_modules", ".next", "out", "dist", "build", "coverage"]
 }

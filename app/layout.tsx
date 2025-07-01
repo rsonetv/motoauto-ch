@@ -1,3 +1,4 @@
+// app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -64,28 +65,30 @@ export default function RootLayout({
         <meta name="theme-color" content="#21808D" />
         <meta name="msapplication-TileColor" content="#21808D" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        
+
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        
+
         {/* DNS prefetch for better performance */}
         <link rel="dns-prefetch" href="//images.unsplash.com" />
-        
+
         {/* Critical CSS for above-the-fold content */}
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            .loading-skeleton {
-              background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-              background-size: 200% 100%;
-              animation: loading 1.5s infinite;
-            }
-            @keyframes loading {
-              0% { background-position: 200% 0; }
-              100% { background-position: -200% 0; }
-            }
-          `
-        }} />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .loading-skeleton {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: loading 1.5s infinite;
+              }
+              @keyframes loading {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+              }
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <AuthProvider>
@@ -94,11 +97,10 @@ export default function RootLayout({
           </div>
           <Toaster />
         </AuthProvider>
-        
+
         {/* Analytics scripts */}
         {process.env.NODE_ENV === 'production' && (
           <>
-            {/* Google Analytics */}
             <script
               async
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
@@ -116,7 +118,7 @@ export default function RootLayout({
                 `,
               }}
             />
-            
+
             {/* Cookie Consent */}
             <script
               dangerouslySetInnerHTML={{
@@ -126,7 +128,7 @@ export default function RootLayout({
                       const banner = document.createElement('div');
                       banner.innerHTML = \`
                         <div style="position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e5e7eb; padding: 1rem; z-index: 9999; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);">
-                          <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: between; gap: 1rem;">
+                          <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
                             <p style="flex: 1; margin: 0; font-size: 14px; color: #374151;">
                               Ta strona używa plików cookie, aby zapewnić najlepsze doświadczenia. 
                               <a href="/privacy" style="color: #21808D; text-decoration: underline;">Dowiedz się więcej</a>
@@ -138,7 +140,6 @@ export default function RootLayout({
                         </div>
                       \`;
                       document.body.appendChild(banner);
-                      
                       window.acceptCookies = function() {
                         localStorage.setItem('cookieConsent', 'true');
                         banner.remove();
@@ -150,7 +151,7 @@ export default function RootLayout({
             />
           </>
         )}
-        
+
         {/* Service Worker Registration */}
         <script
           dangerouslySetInnerHTML={{
