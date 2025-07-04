@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Phone, Mail, MapPin, Facebook, Instagram, YouTube, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 
 // ✅ FIX 1-2: Dodano interface dla props i TypeScript types
 interface FooterProps {
@@ -169,22 +169,22 @@ export function Footer({ className = '' }: FooterProps) {
               <h3 className="text-lg font-semibold mb-4">Szybkie linki</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/search" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={{ pathname: "/search" }} className="text-gray-300 hover:text-white transition-colors">
                     Wyszukiwanie
                   </Link>
                 </li>
                 <li>
-                  <Link href="/auctions" className="text-gray-300 hover:text-white transition-colors">
+                 <Link href={{ pathname:"/auctions"}} className="text-gray-300 hover:text-white transition-colors">
                     Aukcje
                   </Link>
                 </li>
                 <li>
-                  <Link href="/new-listing" className="text-gray-300 hover:text-white transition-colors">
+                 <Link href={{ pathname:"/new-listing"}} className="text-gray-300 hover:text-white transition-colors">
                     Dodaj ogłoszenie
                   </Link>
                 </li>
                 <li>
-                  <Link href="/help" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={{ pathname:"/help"}} className="text-gray-300 hover:text-white transition-colors">
                     Pomoc
                   </Link>
                 </li>
@@ -235,7 +235,7 @@ export function Footer({ className = '' }: FooterProps) {
                 <Instagram className="w-5 h-5" />
               </a>
               <a href={FOOTER_CONFIG.social.youtube} className="text-gray-300 hover:text-white transition-colors">
-                <YouTube className="w-5 h-5" />
+                <Youtube className="w-5 h-5" />
               </a>
               <a href={FOOTER_CONFIG.social.twitter} className="text-gray-300 hover:text-white transition-colors">
                 <Twitter className="w-5 h-5" />
@@ -247,13 +247,13 @@ export function Footer({ className = '' }: FooterProps) {
           <div className="mt-8 pt-4 border-t border-gray-700">
             <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
               <div className="flex space-x-6 mb-2 md:mb-0">
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href={{ pathname:"/terms" }} className="hover:text-white transition-colors">
                   Regulamin
                 </Link>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href={{ pathname:"/privacy" }} className="hover:text-white transition-colors">
                   Polityka prywatności
                 </Link>
-                <Link href="/cookies" className="hover:text-white transition-colors">
+                <Link href={{ pathname:"/cookies" }} className="hover:text-white transition-colors">
                   Cookies
                 </Link>
               </div>

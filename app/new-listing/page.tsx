@@ -30,14 +30,14 @@ export default function HomePage() {
     async function loadData() {
       // Pobierz 8 najnowszych ogłoszeń
       const { data: listings } = await supabase
-        .from<Listing>('listings')
+        .from('listings')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(8)
 
       // Pobierz 4 aktywne aukcje
       const { data: auctions } = await supabase
-        .from<Listing>('listings')
+        .from('listings')
         .select('*')
         .eq('status', 'active')
         .order('created_at', { ascending: false })

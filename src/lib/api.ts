@@ -1,93 +1,93 @@
-// lib/api.ts
-import type { Vehicle, VehicleFilters, ApiResponse } from '@/types/automotive'
+import { supabase } from './supabase';
+import type { Vehicle, VehicleFilters, ApiResponse, GetAllOptions } from '@/types/automotive';
 
-interface GetAllOptions extends VehicleFilters {
-  page?: number
-}
-
-interface ApiPage<T> {
-  vehicles: T[]
-  total: number
-  page: number
-  totalPages: number
-  hasMore: boolean
+export interface VehicleApiResponse {
+  vehicles: Vehicle[];
+  total: number;
+  page: number;
+  totalPages: number;
+  hasMore: boolean;
 }
 
 export const vehicleApi = {
-  async getAll(options: GetAllOptions = {}): Promise<ApiPage<Vehicle>> {
-    // Symulacja API call - w rzeczywistej aplikacji tutaj byłoby zapytanie do Supabase
+  async getAll(options: GetAllOptions = {}): Promise<VehicleApiResponse> {
     const {
-      page = 1,
-      limit = 20,
       category,
-      search,
       priceMin,
       priceMax,
-      ...filters
-    } = options
+      yearMin,
+      yearMax,
+      mileageMax,
+      fuelType,
+      transmission,
+      location,
+      condition,
+      page = 1,
+      limit = 12,
+      sortBy = 'created_at',
+      sortOrder = 'desc',
+      search
+    } = options;
 
-    // Mock data dla przykładu
-    const mockVehicles: Vehicle[] = Array.from({ length: limit }, (_, i) => ({
-      id: `${page}-${i + 1}`,
-      title: `Pojazd ${page}-${i + 1}`,
-      description: `Opis pojazdu ${page}-${i + 1}`,
-      price: Math.floor(Math.random() * 100000) + 10000,
-      category: category || 'osobowe',
-      status: 'active' as const,
-      created_at: new Date().toISOString(),
-      views: Math.floor(Math.random() * 1000),
-      bids: Math.floor(Math.random() * 50),
-    }))
+    try {
+      let query = supabase
+        .from('listings')
+        .select('*', { count: 'exact' });
 
-    const total = 100 // Mock total
-    const totalPages = Math.ceil(total / limit)
-    const hasMore = page < totalPages
+      // Filtry
+      if (category) query = query.eq('category', category);
+      if (priceMin !== undefined) query = query.gte('price', priceMin);
+      if (priceMax !== undefined) query = query.lte('price', priceMax);
+      if (yearMin !== undefined) query = query.gte('year', yearMin);
+      if (yearMax !== undefined) query = query.lte('year', yearMax);
+      if (mileageMax !== undefined) query = query.lte('mileage', mileageMax);
+      if (fuelType) query = query.eq('fuel_type', fuelType);
+      if (transmission) query = query.eq('transmission', transmission);
+      if (location) query = query.ilike('location', `%${location}%`);
+      if (condition) query = query.eq('condition', condition);
+      if (search) query = query.ilike('title', `%${search}%`);
 
-    return {
-      vehicles: mockVehicles,
-      total,
-      page,
-      totalPages,
-      hasMore,
+      query = query.eq('status', 'active');
+      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+      // Paginacja
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+
+      const totalPages = Math.ceil((count || 0) / limit);
+      const hasMore = page < totalPages;
+
+      return {
+        vehicles: data || [],
+        total: count || 0,
+        page,
+        totalPages,
+        hasMore
+      };
+    } catch (error) {
+      console.error('VehicleApi.getAll error:', error);
+      throw error;
     }
   },
 
-  async getById(id: string): Promise<Vehicle | null> {
-    // Mock implementation
-    return {
-      id,
-      title: `Pojazd ${id}`,
-      description: `Szczegółowy opis pojazdu ${id}`,
-      price: 50000,
-      category: 'osobowe',
-      status: 'active',
-      created_at: new Date().toISOString(),
-      views: 150,
-      bids: 5,
+  async getById(id: number): Promise<Vehicle | null> {
+    try {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) return null;
+      return data;
+    } catch (error) {
+      console.error('VehicleApi.getById error:', error);
+      return null;
     }
-  },
-
-  async create(vehicle: Omit<Vehicle, 'id' | 'created_at'>): Promise<Vehicle> {
-    // Mock implementation
-    return {
-      ...vehicle,
-      id: Math.random().toString(36).substr(2, 9),
-      created_at: new Date().toISOString(),
-    }
-  },
-
-  async update(id: string, updates: Partial<Vehicle>): Promise<Vehicle> {
-    const current = await this.getById(id)
-    if (!current) throw new Error('Vehicle not found')
-
-    return {
-      ...current,
-      ...updates,
-    }
-  },
-
-  async delete(id: string): Promise<void> {
-    // Mock implementation
-    console.log(`Deleting vehicle ${id}`)
-  },
-}
+  }
+};

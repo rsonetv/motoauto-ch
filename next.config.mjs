@@ -4,12 +4,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Performance optimizations inspired by CAR FOR YOU
-  experimental: {
-    // appDir: true,             <-- Usuń tę linię
-    typedRoutes: true,
-    serverComponentsExternalPackages: ['mysql2'],
-  },
+
 
   // Image optimization for vehicle photos
   images: {
@@ -76,4 +71,4 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;

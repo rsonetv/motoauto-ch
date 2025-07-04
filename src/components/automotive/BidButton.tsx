@@ -67,7 +67,7 @@ export function BidButton({
     );
   }
 
-  if (auction.status === 'pending') {
+  if (auction.status === 'active') {
     return (
       <div className="text-center py-4">
         <p className="text-gray-600 font-medium">Aukcja wkrótce</p>
