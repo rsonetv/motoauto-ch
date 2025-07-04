@@ -1,61 +1,61 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+// lib/utils.ts
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-// Utility function for combining Tailwind classes (from CAR FOR YOU patterns)
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
-// Price formatting for Swiss market
-export function formatPrice(price: number, currency: 'CHF' | 'EUR' = 'CHF'): string {
+export function formatPrice(amount: number, currency: string = 'CHF'): string {
   return new Intl.NumberFormat('de-CH', {
     style: 'currency',
-    currency,
+    currency: currency,
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(amount)
 }
 
-// Mileage formatting
-export function formatMileage(mileage: number): string {
-  return new Intl.NumberFormat('de-CH').format(mileage) + ' km';
-}
-
-// Date formatting for auction times
 export function formatDate(date: string | Date): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
   return new Intl.DateTimeFormat('pl-PL', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(date));
+  }).format(dateObj)
 }
 
-// Relative time formatting (e.g., "2 hours ago")
 export function formatRelativeTime(date: string | Date): string {
-  const now = new Date();
-  const past = new Date(date);
-  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  const now = new Date()
+  const diffInMs = now.getTime() - dateObj.getTime()
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
 
-  if (diffInSeconds < 60) return 'Przed chwilą';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min temu`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} godz. temu`;
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} dni temu`;
-  
-  return formatDate(date);
+  if (diffInDays === 0) return 'Dzisiaj'
+  if (diffInDays === 1) return 'Wczoraj'
+  if (diffInDays < 7) return `${diffInDays} dni temu`
+  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} tygodni temu`
+
+  return formatDate(dateObj)
 }
 
-// Swiss phone number validation
-export function isValidSwissPhone(phone: string): boolean {
-  const swissPhoneRegex = /^(\+41|0041|0)([1-9]\d{8})$/;
-  return swissPhoneRegex.test(phone.replace(/\s/g, ''));
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9 -]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .trim()
 }
 
-// Email validation
-export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text
+  return text.slice(0, maxLength).trim() + '...'
 }
 
-// Vehicle title generation
-expo
+export function generateId(prefix: string = ''): string {
+  const timestamp = Date.now().toString(36)
+  const randomStr = Math.random().toString(36).substr(2, 5)
+  return prefix ? `${prefix}_${timestamp}_${randomStr}` : `${timestamp}_${randomStr}`
+}

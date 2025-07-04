@@ -1,10 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ClockIcon } from '@heroicons/react/24/outline';
-import type { AuctionTimerProps } from '@/types/automotive';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
+import { AuctionTimerProps } from '@/types/automotive';
 
 interface TimeLeft {
   days: number;
@@ -13,44 +10,67 @@ interface TimeLeft {
   seconds: number;
 }
 
-export function AuctionTimer({ endTime, status, onTimeEnd }: AuctionTimerProps) {
+export function AuctionTimer({ endDate, onTimeUp, className = '' }: AuctionTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isEnding, setIsEnding] = useState(false);
-
-  const calculateTimeLeft = useCallback((): TimeLeft => {
-    const difference = new Date(endTime).getTime() - new Date().getTime();
-    
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
-    };
-  }, [endTime]);
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft();
-      setTimeLeft(newTimeLeft);
+      const now = new Date().getTime();
+      const target = new Date(endDate).getTime();
+      const difference = target - now;
 
-      // Check if auction is ending soon (less than 5 minutes)
-      const totalMinutes = newTimeLeft.days * 24 * 60 + newTimeLeft.hours * 60 + newTimeLeft.minutes;
-      setIsEnding(totalMinutes < 5 && totalMinutes > 0);
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-      // Check if auction has ended
-      if (newTimeLeft.days === 0 && newTimeLeft.hours === 0 && 
-          newTimeLeft.minutes === 0 && newTimeLeft.seconds === 0) {
-        onTimeEnd?.();
-        clearInterval(timer);
+        setTimeLeft({ days, hours, minutes, seconds });
+        setIsExpired(false);
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setIsExpired(true);
+        if (onTimeUp) {
+          onTimeUp();
+        }
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [calculateTimeLeft, onTimeEnd]);
+  }, [endDate, onTimeUp]);
 
   const formatTimeUnit = (value: number, unit: string) => {
-    const displayValue = value.toString().pad
+    return (
+      <div className="flex flex-col items-center">
+        <div className="text-2xl font-bold text-primary">{value.toString().padStart(2, '0')}</div>
+        <div className="text-xs text-gray-500 uppercase">{unit}</div>
+      </div>
+    );
+  };
+
+  if (isExpired) {
+    return (
+      <div className={`text-center p-4 bg-red-50 border border-red-200 rounded-lg ${className}`}>
+        <div className="text-red-600 font-semibold">Aukcja zakończona</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`bg-white border border-gray-200 rounded-lg p-4 ${className}`}>
+      <div className="text-center mb-2">
+        <div className="text-sm text-gray-600">Pozostały czas:</div>
+      </div>
+      <div className="flex justify-center space-x-4">
+        {formatTimeUnit(timeLeft.days, 'dni')}
+        <div className="text-2xl font-bold text-gray-400">:</div>
+        {formatTimeUnit(timeLeft.hours, 'godz')}
+        <div className="text-2xl font-bold text-gray-400">:</div>
+        {formatTimeUnit(timeLeft.minutes, 'min')}
+        <div className="text-2xl font-bold text-gray-400">:</div>
+        {formatTimeUnit(timeLeft.seconds, 'sek')}
+      </div>
+    </div>
+  );
+}

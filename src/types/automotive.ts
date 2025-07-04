@@ -1,85 +1,175 @@
-// Core vehicle types adapted from CAR FOR YOU patterns
-export interface Vehicle {
-  id: string;
+// Base vehicle types
+export interface BaseVehicle {
+  id: number;
   title: string;
-  brand: string;
-  model: string;
-  year: number;
-  mileage: number;
+  description?: string;
   price: number;
-  currency: 'CHF' | 'EUR';
-  fuelType: 'Benzyna' | 'Diesel' | 'EV' | 'Hybryda';
-  transmission: 'Manual' | 'Automatic';
-  bodyType: 'Sedan' | 'Hatchback' | 'SUV' | 'Coupe' | 'Convertible' | 'Wagon';
-  condition: 'excellent' | 'good' | 'fair' | 'poor';
-  location: {
-    city: string;
-    canton: string;
-    country: string;
-  };
-  images: VehicleImage[];
-  specifications: VehicleSpecs;
-  seller: Seller;
-  auction?: AuctionDetails;
+  images: string[];
+  location: string;
+  views: number;
+  featured: boolean;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
-export interface Motorcycle extends Omit<Vehicle, 'bodyType'> {
-  bodyType: 'Sport' | 'Cruiser' | 'Touring' | 'Adventure' | 'Naked' | 'Scooter';
-  engineSize: number; // cm³
-  licenseCategory: 'A1' | 'A2' | 'A';
-}
-
-export interface VehicleImage {
-  id: string;
-  url: string;
-  alt: string;
-  isPrimary: boolean;
-  order: number;
-}
-
-export interface VehicleSpecs {
+export interface VehicleDetails {
+  year?: number;
+  mileage?: number;
   engineSize?: number;
-  power?: number;
-  torque?: number;
-  acceleration?: number;
-  topSpeed?: number;
-  fuelConsumption?: number;
-  co2Emissions?: number;
+  fuelType?: string;
+  transmission?: string;
+  condition?: string;
+  bodyType?: string;
+  color?: string;
   doors?: number;
   seats?: number;
-  trunkCapacity?: number;
-  weight?: number;
-  features: string[];
 }
 
-export interface Seller {
-  id: string;
-  type: 'private' | 'dealer';
-  name: string;
-  rating?: number;
-  reviewCount?: number;
-  verified: boolean;
-  location: {
-    city: string;
-    canton: string;
-  };
-  contact: {
-    phone?: string;
-    email: string;
-  };
+export interface Vehicle extends BaseVehicle, VehicleDetails {
+  category: VehicleCategory;
+  status: VehicleStatus;
+  userId: string;
 }
 
-// Auction types inspired by CAR FOR YOU's marketplace
-export interface AuctionDetails {
-  id: string;
-  type: 'live' | 'blind' | 'reserve' | 'buy-now';
-  status: 'upcoming' | 'live' | 'ending' | 'ended';
-  startingPrice: number;
-  currentBid: number;
+// Enums and types
+export type VehicleCategory = 
+  | 'samochody-osobowe'
+  | 'motocykle'
+  | 'samochody-dostawcze'
+  | 'ciężarówki'
+  | 'przyczepy'
+  | 'maszyny-rolnicze'
+  | 'pozostałe';
+
+export type VehicleStatus = 
+  | 'active'
+  | 'sold'
+  | 'expired'
+  | 'draft';
+
+export type FuelType = 
+  | 'benzyna'
+  | 'diesel'
+  | 'hybrid'
+  | 'elektryczny'
+  | 'lpg'
+  | 'cng';
+
+export type TransmissionType = 
+  | 'manualna'
+  | 'automatyczna'
+  | 'półautomatyczna';
+
+export type VehicleCondition = 
+  | 'nowy'
+  | 'używany'
+  | 'uszkodzony'
+  | 'do remontu';
+
+// Auction types
+export interface Auction extends Vehicle {
+  auctionEndDate: string;
+  currentBid?: number;
+  bidCount: number;
   reservePrice?: number;
   buyNowPrice?: number;
-  startTime: string;
-  endTime: string;
-  bidCo
+}
+
+export interface Bid {
+  id: number;
+  listingId: number;
+  userId: string;
+  amount: number;
+  createdAt: string;
+  status: 'active' | 'outbid' | 'winning';
+}
+
+// Component props
+export interface VehicleCardProps {
+  vehicle: Vehicle;
+  showFavorite?: boolean;
+  onFavoriteClick?: (vehicleId: number) => void;
+  className?: string;
+}
+
+export interface AuctionTimerProps {
+  endDate: string;
+  onTimeUp?: () => void;
+  className?: string;
+}
+
+export interface BidButtonProps {
+  auction: Auction;
+  onBidPlaced?: (amount: number) => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+// Search and filters
+export interface VehicleFilters {
+  category?: VehicleCategory;
+  priceMin?: number;
+  priceMax?: number;
+  yearMin?: number;
+  yearMax?: number;
+  mileageMax?: number;
+  fuelType?: FuelType;
+  transmission?: TransmissionType;
+  location?: string;
+  condition?: VehicleCondition;
+  page?: number;
+  limit?: number;
+  sortBy?: 'price' | 'year' | 'mileage' | 'created_at';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface VehicleSearchParams {
+  query?: string;
+  filters: VehicleFilters;
+}
+
+export interface VehicleSearchResult {
+  vehicles: Vehicle[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+// Hooks return types
+export interface UseVehicleSearchReturn {
+  vehicles: Vehicle[];
+  loading: boolean;
+  error: string | null;
+  total: number;
+  page: number;
+  totalPages: number;
+  filters: VehicleFilters;
+  setFilters: (filters: Partial<VehicleFilters>) => void;
+  loadMore: () => void;
+  hasMore: boolean;
+}
+
+// Form types
+export interface VehicleFormData {
+  title: string;
+  description: string;
+  price: number;
+  category: VehicleCategory;
+  year?: number;
+  mileage?: number;
+  engineSize?: number;
+  fuelType?: FuelType;
+  transmission?: TransmissionType;
+  condition?: VehicleCondition;
+  location: string;
+  images: File[];
+}
+
+// API types
+export interface CreateVehicleRequest extends Omit<VehicleFormData, 'images'> {
+  imageUrls: string[];
+}
+
+export interface UpdateVehicleRequest extends Partial<CreateVehicleRequest> {
+  id: number;
+}

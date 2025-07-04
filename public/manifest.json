@@ -1,0 +1,16 @@
+{
+  "name": "MotoAuto-CH",
+  "short_name": "MotoAuto",
+  "description": "Platforma aukcyjna dla pojazdów w Szwajcarii",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "100x100",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,11 +1,12 @@
 // app/layout.tsx
-import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { AuthProvider } from '@/lib/auth'
-import { Toaster } from '@/components/ui/toaster'
+import React from 'react';
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { AuthProvider } from '@/lib/auth';
+import { Toaster } from '@/components/ui/toaster';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'MotoAuto.ch - Motocykle i Samochody w Szwajcarii',
@@ -48,12 +49,12 @@ export const metadata: Metadata = {
   verification: {
     google: 'google-site-verification-code',
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="pl" suppressHydrationWarning>
@@ -68,33 +69,31 @@ export default function RootLayout({
 
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* DNS prefetch for better performance */}
+        {/* DNS prefetch */}
         <link rel="dns-prefetch" href="//images.unsplash.com" />
 
-        {/* Critical CSS for above-the-fold content */}
+        {/* Critical CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
-              .loading-skeleton {
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: loading 1.5s infinite;
-              }
-              @keyframes loading {
-                0% { background-position: 200% 0; }
-                100% { background-position: -200% 0; }
-              }
-            `,
+            .loading-skeleton {
+              background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+              background-size: 200% 100%;
+              animation: loading 1.5s infinite;
+            }
+            @keyframes loading {
+              0% { background-position: 200% 0; }
+              100% { background-position: -200% 0; }
+            }
+          `,
           }}
         />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <AuthProvider>
-          <div className="min-h-screen bg-gray-50">
-            {children}
-          </div>
+          <div className="min-h-screen bg-gray-50">{children}</div>
           <Toaster />
         </AuthProvider>
 
@@ -108,67 +107,64 @@ export default function RootLayout({
             <script
               dangerouslySetInnerHTML={{
                 __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-                    page_title: document.title,
-                    page_location: window.location.href,
-                  });
-                `,
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                page_title: document.title,
+                page_location: window.location.href,
+              });
+            `,
               }}
             />
-
-            {/* Cookie Consent */}
             <script
               dangerouslySetInnerHTML={{
                 __html: `
-                  (function() {
-                    if (!localStorage.getItem('cookieConsent')) {
-                      const banner = document.createElement('div');
-                      banner.innerHTML = \`
-                        <div style="position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e5e7eb; padding: 1rem; z-index: 9999; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);">
-                          <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                            <p style="flex: 1; margin: 0; font-size: 14px; color: #374151;">
-                              Ta strona używa plików cookie, aby zapewnić najlepsze doświadczenia. 
-                              <a href="/privacy" style="color: #21808D; text-decoration: underline;">Dowiedz się więcej</a>
-                            </p>
-                            <button onclick="acceptCookies()" style="background: #21808D; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 14px;">
-                              Akceptuj
-                            </button>
-                          </div>
-                        </div>
-                      \`;
-                      document.body.appendChild(banner);
-                      window.acceptCookies = function() {
-                        localStorage.setItem('cookieConsent', 'true');
-                        banner.remove();
-                      };
-                    }
-                  })();
-                `,
+              (function() {
+                if (!localStorage.getItem('cookieConsent')) {
+                  const banner = document.createElement('div');
+                  banner.innerHTML = \`
+                    <div style="position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e5e7eb; padding: 1rem; z-index: 9999; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);">
+                      <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                        <p style="flex: 1; margin: 0; font-size: 14px; color: #374151;">
+                          Ta strona używa plików cookie, aby zapewnić najlepsze doświadczenia. 
+                          <a href="/privacy" style="color: #21808D; text-decoration: underline;">Dowiedz się więcej</a>
+                        </p>
+                        <button onclick="acceptCookies()" style="background: #21808D; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                          Akceptuj
+                        </button>
+                      </div>
+                    </div>
+                  \`;
+                  document.body.appendChild(banner);
+                  window.acceptCookies = function() {
+                    localStorage.setItem('cookieConsent', 'true');
+                    banner.remove();
+                  };
+                }
+              })();
+            `,
               }}
             />
           </>
         )}
 
-        {/* Service Worker Registration */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('SW registered: ', registration);
-                  }).catch(function(registrationError) {
-                    console.log('SW registration failed: ', registrationError);
-                  });
+            if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                  console.log('SW registered: ', registration);
+                }).catch(function(registrationError) {
+                  console.log('SW registration failed: ', registrationError);
                 });
-              }
-            `,
+              });
+            }
+          `,
           }}
         />
       </body>
     </html>
-  )
+  );
 }
