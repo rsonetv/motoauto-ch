@@ -169,9 +169,9 @@ export default function HomePage() {
           )}
 
           <div className="text-center mt-12">
-            <Link href="/search">
-              <Button size="lg">Zobacz wszystkie oferty</Button>
-            </Link>
+           <Link href={{ pathname: '/search' }}> // Poprawka
+  <Button size="lg">Zobacz wszystkie oferty</Button>
+</Link>
           </div>
         </div>
       </section>

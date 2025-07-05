@@ -24,8 +24,8 @@ export function BidButton({
   isLoading = false
 }: BidButtonProps) {
   // Zapewnij, że currentBid jest liczbą
-  const currentBid = typeof auction.currentBid === 'number' ? auction.currentBid : 0;
-  const minBidAmount = currentBid + 50;
+ const currentBid = typeof auction.current_bid === 'number' ? auction.current_bid : 0;
+  const minBidAmount = currentBid + 1;
   const [bidAmount, setBidAmount] = useState(currentBid + 100);
   const [showCustomBid, setShowCustomBid] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
@@ -83,10 +83,10 @@ export function BidButton({
           Aktualna najwyższa oferta
         </h3>
         <p className="text-3xl font-bold text-blue-600">
-          {formatPrice(currentBid, 'CHF')}
+          {formatPrice(currentBid)}
         </p>
         <p className="text-sm text-gray-500 mt-1">
-          Minimalna oferta: {formatPrice(minBidAmount, 'CHF')}
+          Minimalna oferta: {formatPrice(minBidAmount)}
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export function BidButton({
             whileHover={{ scale: disabled ? 1 : 1.02 }}
           >
             <ArrowUpIcon className="w-4 h-4" />
-            {formatPrice(amount, 'CHF')}
+            {formatPrice(amount)}
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -165,22 +165,22 @@ export function BidButton({
           {customAmount && !isValidCustomBid() && (
             <div className="flex items-center gap-2 text-red-600 text-sm">
               <ExclamationTriangleIcon className="w-4 h-4" />
-              Minimalna oferta to {formatPrice(minBidAmount, 'CHF')}
+              Minimalna oferta to {formatPrice(minBidAmount)}
             </div>
           )}
         </div>
       )}
 
       {/* Buy Now Option */}
-      {typeof auction.buyNowPrice === 'number' && (
+      {typeof auction.buy_now_price === 'number' && (
         <motion.button
-          onClick={() => onBid(auction.buyNowPrice!)}
+          onClick={() => onBid(auction.buy_now_price!)}
           disabled={disabled || isLoading}
           className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold rounded-lg transition-colors duration-200"
           whileTap={{ scale: 0.98 }}
         >
           <CurrencyDollarIcon className="w-5 h-5 inline mr-2" />
-          Kup Teraz - {formatPrice(auction.buyNowPrice, 'CHF')}
+          Kup Teraz - {formatPrice(auction.buy_now_price)}
         </motion.button>
       )}
     </div>

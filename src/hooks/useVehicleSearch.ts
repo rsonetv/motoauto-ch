@@ -5,69 +5,57 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import type {
   Vehicle,
   VehicleFilters,
-  UseVehicleSearchReturn
+  UseVehicleSearchReturn,
+  ApiResponse,
 } from '@/types/automotive';
 import { vehicleApi } from '@/lib/api';
 import { debounce } from '@/lib/utils';
 
-export function useVehicleSearch(
-  initialFilters: VehicleFilters = {}
-): UseVehicleSearchReturn {
+export function useVehicleSearch(initialFilters: VehicleFilters = {}): UseVehicleSearchReturn {
   const [filters, setFilters] = useState<VehicleFilters>(initialFilters);
   const [debouncedFilters, setDebouncedFilters] = useState<VehicleFilters>(initialFilters);
 
-  const debouncedSet = useCallback(
-    debounce((f: VehicleFilters) => setDebouncedFilters(f), 300),
+  const debouncedSetFilters = useCallback(
+    debounce((newFilters: VehicleFilters) => {
+      setDebouncedFilters(newFilters);
+    }, 500),
     []
   );
 
   useEffect(() => {
-    debouncedSet(filters);
-  }, [filters, debouncedSet]);
+    debouncedSetFilters(filters);
+  }, [filters, debouncedSetFilters]);
 
   const {
     data,
     isLoading,
     error,
-    isFetchingNextPage,
     fetchNextPage,
-    hasNextPage
-  } = useInfiniteQuery({
+    hasNextPage,
+  } = useInfiniteQuery<ApiResponse, Error>({
+    // POPRAWKA: Prawidłowa składnia dla @tanstack/react-query v5
     queryKey: ['vehicles', debouncedFilters],
-    queryFn: ({ pageParam = 1 }) =>
-      vehicleApi.getAll({ ...debouncedFilters, page: pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage: any) =>
-      lastPage.hasMore ? lastPage.page + 1 : undefined,
-    keepPreviousData: true,
-    staleTime: 60_000,
-    cacheTime: 5 * 60_000
+    queryFn: ({ pageParam }) => vehicleApi.getAll({ ...debouncedFilters, page: pageParam }),
+    initialPageParam: 1, // To jest parametr początkowy dla queryFn, a nie opcja hooka
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
   });
 
-  const vehicles: Vehicle[] = data?.pages.flatMap((page: any) => page.vehicles) || [];
-  const total = data?.pages[0]?.total || 0;
-  const page = data?.pages.length || 1;
-  const totalPages = data?.pages[0]?.totalPages || 1;
-  const hasMore = hasNextPage || false;
-  const loading = isLoading && page === 1;
-  const loadingMore = isFetchingNextPage;
-
-  const loadMore = useCallback(() => {
-    if (hasMore && !loadingMore) {
-      fetchNextPage();
-    }
-  }, [hasMore, loadingMore, fetchNextPage]);
+  // Teraz TypeScript poprawnie wywnioskuje typy z `ApiResponse`
+  const vehicles: Vehicle[] = data?.pages.flatMap((page) => page.vehicles) ?? [];
+  const total: number = data?.pages[0]?.total ?? 0;
+  const page: number = data?.pages.length ?? 1;
+  const totalPages: number = data?.pages[0]?.totalPages ?? 1;
 
   return {
     vehicles,
+    loading: isLoading,
+    error: error ? error.message : null,
     total,
     page,
     totalPages,
     filters,
     setFilters,
-    loading,
-    error: error instanceof Error ? error.message : null,
-    hasMore,
-    loadMore
+    loadMore: fetchNextPage,
+    hasMore: !!hasNextPage,
   };
 }
